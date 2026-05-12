@@ -1,92 +1,53 @@
-
-'''
-import tkinter as tk
-root=tk.Tk()
-root.title("Croissant Rush")
-root.geometry("500x500")
-root.mainloop()
-'''
-
 import tkinter as tk
 from tkinter import messagebox
 import random
 import json
 import os
+from PIL import Image, ImageTk
 
 class CroissantRush:
     def __init__(self, root):
         self.root = root
         self.root.title("Croissant Rush")
-        self.root.geometry("500x600")
+        self.root.geometry("500x700")
         
-        # File System Setup
-        self.score_file = "scores.json"
-        self.high_scores = self.load_scores()
+        # 1. LOAD & RESIZE ASSETS
+        # We resize them here so they don't clutter the screen
+        self.bg_img = ImageTk.PhotoImage(Image.open("pixelcafe.png").resize((500, 700)))
+        self.good_img = ImageTk.PhotoImage(Image.open("croissant.png").resize((60, 60)))
+        self.bad_img = ImageTk.PhotoImage(Image.open("pizzacroissant.png").resize((60, 60)))
         
         self.running = False
-        self.items = []
         self.score = 0
-        
-        # Difficulty Settings: {Speed, Spawn Rate}
-        self.levels = {
-            "Breeze": (3, 1500),
-            "Easy":   (5, 1200),
-            "Medium": (8, 800),
-            "Hard":   (12, 500)
-        }
+        self.speed_multiplier = 1.0
+        self.items = []
         
         self.show_menu()
 
-    # --- DATA MANIPULATION (File System) ---
-    def load_scores(self):
-        if os.path.exists(self.score_file):
-            try:
-                with open(self.score_file, "r") as f:
-                    return json.load(f)
-            except: return []
-        return []
-
-    def save_new_score(self):
-        """INSERT and UPDATE logic"""
-        self.high_scores.append(self.score)
-        # Keep top 5 only
-        self.high_scores = sorted(self.high_scores, reverse=True)[:5]
-        with open(self.score_file, "w") as f:
-            json.dump(self.high_scores, f)
-
-    # --- GUI SCREENS ---
     def show_menu(self):
         self.menu_frame = tk.Frame(self.root, bg="#F5DEB3")
         self.menu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+        tk.Label(self.menu_frame, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
+        tk.Button(self.menu_frame, text="PLAY", font=("Arial", 18), command=self.start_game, width=10).pack(pady=20)
 
-        tk.Label(self.menu_frame, text="🥐 Croissant Rush 🥐", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
-        
-        tk.Label(self.menu_frame, text="Select Difficulty:", bg="#F5DEB3").pack()
-        self.diff_var = tk.StringVar(value="Easy")
-        for lvl in self.levels.keys():
-            tk.Radiobutton(self.menu_frame, text=lvl, variable=self.diff_var, value=lvl, bg="#F5DEB3").pack()
-
-        tk.Button(self.menu_frame, text="PLAY", command=self.start_game, width=15, bg="#8B4513", fg="white").pack(pady=10)
-        tk.Button(self.menu_frame, text="SCOREBOARD", command=self.show_scores, width=15).pack()
-
-    def show_scores(self):
-        scores = "\n".join([f"Rank {i+1}: {s}" for i, s in enumerate(self.high_scores)])
-        messagebox.showinfo("Scoreboard", scores if scores else "No records yet!")
-
-    # --- GAME LOGIC ---
     def start_game(self):
-        self.menu_frame.place_forget()
-        self.running = True
+        if hasattr(self, 'menu_frame'):
+            self.menu_frame.place_forget()
+        
         self.score = 0
+        self.speed_multiplier = 1.0
+        self.running = True
         self.items = []
         
-        self.canvas = tk.Canvas(self.root, width=500, height=600, bg="#FFF8DC")
+        # CREATE CANVAS
+        self.canvas = tk.Canvas(self.root, width=500, height=700)
         self.canvas.pack()
         
-        self.score_txt = self.canvas.create_text(60, 20, text=f"Score: {self.score}", font=("Arial", 14))
+        # DRAW BACKGROUND
+        self.canvas.create_image(0, 0, image=self.bg_img, anchor="nw")
         
-        diff_name = self.diff_var.get()
-        self.speed, self.spawn_rate = self.levels[diff_name]
+        self.score_display = self.canvas.create_text(80, 30, text=f"Score: {self.score}", 
+                                                     font=("Arial", 16, "bold"), fill="white")
         
         self.spawn_loop()
         self.game_loop()
@@ -94,53 +55,61 @@ class CroissantRush:
     def spawn_loop(self):
         if not self.running: return
         
-        x = random.randint(30, 470)
-        is_pizza = random.random() < 0.2
-        color = "#FF6347" if is_pizza else "#FFD700" # Pizza vs Good
+        x = random.randint(50, 450)
+        is_good = random.random() > 0.25
+        img = self.good_img if is_good else self.bad_img
         
-        # Draw Croissant
-        item_id = self.canvas.create_oval(x, -50, x+40, -10, fill=color, outline="brown")
+        # Using anchor="center" makes the movement math much easier
+        item_id = self.canvas.create_image(x, -50, image=img, anchor="center")
         
-        # Click Event: Tag Bind
-        self.canvas.tag_bind(item_id, "<Button-1>", lambda e, i=item_id, p=is_pizza: self.handle_click(i, p))
+        self.canvas.tag_bind(item_id, "<Button-1>", lambda e, i=item_id, g=is_good: self.process_click(i, g))
+        self.items.append({"id": item_id, "is_good": is_good})
         
-        self.items.append({"id": item_id, "is_pizza": is_pizza})
-        self.root.after(self.spawn_rate, self.spawn_loop)
+        interval = max(400, int(1200 / self.speed_multiplier))
+        self.root.after(interval, self.spawn_loop)
 
-    def handle_click(self, item_id, is_pizza):
-        if is_pizza:
-            self.end_game("Tragedy! You touched a Pizza Croissant!")
-        else:
+    def process_click(self, item_id, is_good):
+        if not self.running: return
+        if is_good:
             self.score += 10
-            self.canvas.itemconfig(self.score_txt, text=f"Score: {self.score}")
+            self.canvas.itemconfig(self.score_display, text=f"Score: {self.score}")
+            if self.score % 50 == 0:
+                self.speed_multiplier += 0.1
             self.canvas.delete(item_id)
             self.items = [i for i in self.items if i["id"] != item_id]
+        else:
+            self.end_game_flow()
 
     def game_loop(self):
         if not self.running: return
         
+        current_speed = 5 * self.speed_multiplier
+        
         for item_data in self.items[:]:
             item = item_data["id"]
-            self.canvas.move(item, 0, self.speed)
+            self.canvas.move(item, 0, current_speed)
             
-            y2 = self.canvas.coords(item)[3]
-            if y2 > 600: # Reached bottom
-                if not item_data["is_pizza"]:
-                    # Missed a good croissant penalty
+            # THE FIX: Image coords only have [x, y]. coords[1] is the vertical position.
+            coords = self.canvas.coords(item)
+            if coords and coords[1] > 750: 
+                if item_data["is_good"]:
                     self.score = max(0, self.score - 5)
-                    self.canvas.itemconfig(self.score_txt, text=f"Score: {self.score}")
+                    self.canvas.itemconfig(self.score_display, text=f"Score: {self.score}")
                 
                 self.canvas.delete(item)
-                self.items.remove(item_data)
+                if item_data in self.items:
+                    self.items.remove(item_data)
 
         self.root.after(30, self.game_loop)
 
-    def end_game(self, msg):
+    def end_game_flow(self):
         self.running = False
-        self.save_new_score()
-        messagebox.showinfo("Game Over", f"{msg}\nFinal Score: {self.score}")
+        play_again = messagebox.askyesno("GAME OVER", f"Final Score: {self.score}\nPlay again?")
         self.canvas.destroy()
-        self.show_menu()
+        if play_again:
+            self.start_game()
+        else:
+            self.show_menu()
 
 if __name__ == "__main__":
     root = tk.Tk()
