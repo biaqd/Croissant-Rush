@@ -91,7 +91,9 @@ def process_click(item_id, is_good):
     else:
         if lives > 0:
             lives -= 1
-            canvas.itemconfig(lives_display, text=f"Lives: {lives}")   
+            canvas.itemconfig(lives_display, text=f"Lives: {lives}")
+            canvas.delete(item_id)
+            items = [i for i in items if i["id"] != item_id]   
             if lives == 0:
                 end_game()
 
