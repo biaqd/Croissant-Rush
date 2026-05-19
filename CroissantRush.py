@@ -29,25 +29,22 @@ def credits():
 def difficulty_selection():
     difficulty_frame = tk.Frame(root, bg="#F5DEB3")
     difficulty_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
-    tk.Label(difficulty_frame, text="SELECT DIFFICULTY", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
-    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("easy"),start_game], width=30).pack(pady=30)
+    tk.Label(difficulty_frame, text="SELECT DIFFICULTY", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=50)
+    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("easy"),start_game], width=30).pack(pady=20)
     tk.Button(difficulty_frame, text="MEDIUM (3 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("medium"),start_game], width=30).pack(pady=20)
     tk.Button(difficulty_frame, text="HARD (1 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("hard"),start_game], width=30).pack(pady=20)
 
 
-def set_difficulty(level):
-    global lives
+    
+def start_game():
+    global score, speed_multiplier, running, items, canvas, score_display,lives
+    
     if level == "easy":
         lives = 5
     elif level == "medium":
         lives = 3
     elif level == "hard":
         lives = 1
-
-
-def start_game():
-    global score, speed_multiplier, running, items, canvas, score_display
-    
     menu_frame.place_forget()
     
     score = 0
@@ -60,7 +57,7 @@ def start_game():
     
     canvas.create_image(0, 0, image=bg_img, anchor="nw")
     score_display = canvas.create_text(80, 30, text=f"Score: {score}", font=("Arial", 16, "bold"), fill="white")
-    
+    lives_display = canvas.create_text(420, 30, text=f"Lives: {lives}", font=("Arial", 16, "bold"), fill="white")
     spawn_loop()
     game_loop()
 
@@ -93,7 +90,7 @@ def process_click(item_id, is_good):
     else:
         if lives > 0:
             lives -= 1
-            canvas.itemconfig(lives_display, text=f"lives: {lives}")   
+            canvas.itemconfig(lives_display, text=f"Lives: {lives}")   
             if lives == 0:
                 end_game()
 
