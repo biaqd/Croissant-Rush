@@ -21,16 +21,14 @@ def show_menu():
 def credits():
     credits_frame = tk.Frame(root, bg="#F5DEB3")
     credits_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
-    
-    tk.Label(credits_frame, text="CREDITS", font=("Arial", 24, "bold"), bg="#000000").pack(pady=20)
-    
+    tk.Label(credits_frame, text="CREDITS", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
     tk.Label(credits_frame, text="Thank you for playing!\n " \
           "This game is inspired by classic arcade games\n " \
-          "Developed by Paris Baguette Team", font=("Arial", 18), bg="#000000").pack(pady=20)
+          "Developed by Paris Baguette Team", font=("Arial", 18), bg="#F5DEB3").pack(pady=40)
     tk.Button(credits_frame, 
               text="BACK TO MENU", font=("Arial", 18), 
               command=lambda: [credits_frame.destroy(), show_menu()],
-              width=30).pack(pady=50)
+              width=30).pack(pady=60)
 
 def start_game():
     global score, speed_multiplier, running, items, canvas, score_display
