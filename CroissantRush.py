@@ -25,6 +25,27 @@ def credits():
     tk.Label(credits_frame, text="Thank you for playing!\n \nThis game is inspired by an arcade games\n \nDeveloped by Paris Baguette Team", font=("Arial", 18), bg="#F5DEB3").pack(pady=40)
     tk.Button(credits_frame, text="BACK TO MENU", font=("Arial", 18), command=lambda: [credits_frame.destroy(), show_menu()],width=30).pack(pady=60)
 
+
+def difficulty_selection():
+    difficulty_frame = tk.Frame(root, bg="#F5DEB3")
+    difficulty_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+    tk.Label(difficulty_frame, text="SELECT DIFFICULTY", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
+    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("easy")], width=30).pack(pady=30)
+    tk.Button(difficulty_frame, text="MEDIUM (3 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("medium")], width=30).pack(pady=20)
+    tk.Button(difficulty_frame, text="HARD (1 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("hard")], width=30).pack(pady=20)
+
+
+def set_difficulty(level):
+    global lives
+    if level == "easy":
+        lives = 5
+    elif level == "medium":
+        lives = 3
+    elif level == "hard":
+        lives = 1
+    start_game()
+
+
 def start_game():
     global score, speed_multiplier, running, items, canvas, score_display
     
@@ -102,8 +123,10 @@ def end_game():
     end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
     tk.Label(end_gameframe, text=f"GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
-    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=start_game, width=30).pack(pady=60)
+    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=start_game, width=30).pack(pady=20)
+    tk.Button(end_gameframe, text="CHANGE DIFFICULTY", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
+    tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
     canvas.destroy()
 
 
