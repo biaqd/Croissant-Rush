@@ -116,7 +116,7 @@ def game_loop():
     global score, items
     if not running : return
     
-    current_speed = 6 * speed_multiplier
+    current_speed = 5 * speed_multiplier
     
     for item_data in items[:]:
         item = item_data["id"]
