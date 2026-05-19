@@ -64,10 +64,10 @@ def process_click(item_id, is_good):
     if not running: return
     
     if is_good:
-        score += 10
+        score += 15
         canvas.itemconfig(score_display, text=f"Score: {score}")
-        if score % 50 == 0:
-            speed_multiplier += 100
+        if score % 10 == 0:
+            speed_multiplier += 0.1
         canvas.delete(item_id)
         items = [i for i in items if i["id"] != item_id]
     else:
@@ -86,7 +86,7 @@ def game_loop():
         coords = canvas.coords(item)
         if coords and coords[1] > 750: 
             if item_data["is_good"]:
-                score = max(0, score - 5)
+                score = max(0, score - 10)
                 canvas.itemconfig(score_display, text=f"Score: {score}")
             
             canvas.delete(item)
@@ -101,14 +101,11 @@ def end_game():
     end_gameframe = tk.Frame(root, bg="#F5DEB3")
     end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
-    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=start_game, width=30).pack(pady=10)
-    play_again = messagebox.askyesno("GAME OVER", f"Final Score: {score}\nPlay again?")
+    tk.Label(end_gameframe, text=f"GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
+    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=start_game, width=30).pack(pady=20)
+    tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     canvas.destroy()
-    
-    if play_again:
-        start_game()
-    else:
-        show_menu()
+
 
 # Initialisation de la fenêtre principale
 root = tk.Tk()
