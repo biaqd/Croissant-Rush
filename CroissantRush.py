@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 
 # Variables globales
 score = 0
+lives = 0
 speed_multiplier = 1.0
 running = False
 items = []
@@ -123,8 +124,7 @@ def end_game():
     end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
     tk.Label(end_gameframe, text=f"GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
-    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), start_game(Level)], width=30).pack(pady=20)
-    tk.Button(end_gameframe, text="CHANGE DIFFICULTY", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
+    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), difficulty_selection], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
     canvas.destroy()
