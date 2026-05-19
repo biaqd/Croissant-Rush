@@ -22,13 +22,8 @@ def credits():
     credits_frame = tk.Frame(root, bg="#F5DEB3")
     credits_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(credits_frame, text="CREDITS", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
-    tk.Label(credits_frame, text="Thank you for playing!\n " \
-          "This game is inspired by classic arcade games\n " \
-          "Developed by Paris Baguette Team", font=("Arial", 18), bg="#F5DEB3").pack(pady=40)
-    tk.Button(credits_frame, 
-              text="BACK TO MENU", font=("Arial", 18), 
-              command=lambda: [credits_frame.destroy(), show_menu()],
-              width=30).pack(pady=60)
+    tk.Label(credits_frame, text="Thank you for playing!\n \nThis game is inspired by an arcade games\n \nDeveloped by Paris Baguette Team", font=("Arial", 18), bg="#F5DEB3").pack(pady=40)
+    tk.Button(credits_frame, text="BACK TO MENU", font=("Arial", 18), command=lambda: [credits_frame.destroy(), show_menu()],width=30).pack(pady=60)
 
 def start_game():
     global score, speed_multiplier, running, items, canvas, score_display
@@ -43,6 +38,7 @@ def start_game():
     canvas = tk.Canvas(root, width=500, height=700)
     canvas.pack()
     
+    canvas.create_image(0, 0, image=bg_img, anchor="nw")
     score_display = canvas.create_text(80, 30, text=f"Score: {score}", font=("Arial", 16, "bold"), fill="white")
     
     spawn_loop()
@@ -52,7 +48,7 @@ def spawn_loop():
     if not running: return
     
     x = random.randint(50, 450)
-    is_good = random.random() > 0.25
+    is_good = random.random() > 0.40
     img = good_img if is_good else bad_img
     
     item_id = canvas.create_image(x, -50, image=img, anchor="center")
@@ -71,7 +67,7 @@ def process_click(item_id, is_good):
         score += 10
         canvas.itemconfig(score_display, text=f"Score: {score}")
         if score % 50 == 0:
-            speed_multiplier += 0.2
+            speed_multiplier += 100
         canvas.delete(item_id)
         items = [i for i in items if i["id"] != item_id]
     else:
