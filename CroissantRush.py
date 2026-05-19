@@ -14,7 +14,15 @@ def show_menu():
     menu_frame = tk.Frame(root, bg="#F5DEB3")
     menu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(menu_frame, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
-    tk.Button(menu_frame, text="PLAY", font=("Arial", 18), command=start_game, width=10).pack(pady=20)
+    tk.Button(menu_frame, text="PLAY", font=("Arial", 18), command=start_game, width=30).pack(pady=30)
+    tk.Button(menu_frame, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
+    tk.Button(menu_frame, text="CREDITS", font=("Arial", 18), command=credits, width=30).pack(pady=20)
+
+def credits():
+    credits_frame = tk.Frame(root, bg="#F5DEB3")
+    credits_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+    messagebox.showinfo("CREDITS", "Thank you for playing!\n This game is inspired by classic arcade games\n Developed by Paris Baguette Team")
+    tk.Button(credits_frame, text="BACK TO MENU", font=("Arial", 18), command=lambda: [credits_frame.destroy(), show_menu()], width=30).pack(pady=50)
 
 def start_game():
     global score, speed_multiplier, running, items, canvas, score_display
@@ -29,7 +37,6 @@ def start_game():
     canvas = tk.Canvas(root, width=500, height=700)
     canvas.pack()
     
-    canvas.create_image(0, 0, image=bg_img, anchor="nw")
     score_display = canvas.create_text(80, 30, text=f"Score: {score}", font=("Arial", 16, "bold"), fill="white")
     
     spawn_loop()
@@ -58,7 +65,7 @@ def process_click(item_id, is_good):
         score += 10
         canvas.itemconfig(score_display, text=f"Score: {score}")
         if score % 50 == 0:
-            speed_multiplier += 0.1
+            speed_multiplier += 0.2
         canvas.delete(item_id)
         items = [i for i in items if i["id"] != item_id]
     else:
@@ -66,7 +73,7 @@ def process_click(item_id, is_good):
 
 def game_loop():
     global score, items
-    if not running: return
+    if not running : return
     
     current_speed = 5 * speed_multiplier
     
@@ -89,6 +96,10 @@ def game_loop():
 def end_game():
     global running
     running = False
+    end_gameframe = tk.Frame(root, bg="#F5DEB3")
+    end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
+    tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
+    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=start_game, width=30).pack(pady=10)
     play_again = messagebox.askyesno("GAME OVER", f"Final Score: {score}\nPlay again?")
     canvas.destroy()
     
