@@ -30,9 +30,9 @@ def difficulty_selection():
     difficulty_frame = tk.Frame(root, bg="#F5DEB3")
     difficulty_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(difficulty_frame, text="SELECT DIFFICULTY", font=("Arial", 24, "bold"), bg="#F5DEB3").pack(pady=20)
-    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("easy")], width=30).pack(pady=30)
-    tk.Button(difficulty_frame, text="MEDIUM (3 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("medium")], width=30).pack(pady=20)
-    tk.Button(difficulty_frame, text="HARD (1 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("hard")], width=30).pack(pady=20)
+    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("easy"),start_game], width=30).pack(pady=30)
+    tk.Button(difficulty_frame, text="MEDIUM (3 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("medium"),start_game], width=30).pack(pady=20)
+    tk.Button(difficulty_frame, text="HARD (1 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), lambda: set_difficulty("hard"),start_game], width=30).pack(pady=20)
 
 
 def set_difficulty(level):
@@ -43,7 +43,6 @@ def set_difficulty(level):
         lives = 3
     elif level == "hard":
         lives = 1
-    start_game()
 
 
 def start_game():
