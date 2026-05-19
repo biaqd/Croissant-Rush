@@ -30,22 +30,37 @@ def credits():
 def difficulty_selection():
     difficulty_frame = tk.Frame(root, bg="#F5DEB3")
     difficulty_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
-    tk.Label(difficulty_frame, text="SELECT DIFFICULTY", font=("Courier", 24, "bold"), bg="#F5DEB3").pack(pady=50)
-    tk.Button(difficulty_frame, text="EASY (5 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), start_game("easy")], width=30).pack(pady=20)
-    tk.Button(difficulty_frame, text="MEDIUM (3 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), start_game("medium")], width=30).pack(pady=20)
-    tk.Button(difficulty_frame, text="HARD (1 life)", font=("Arial", 18), command=lambda: [difficulty_frame.destroy(), start_game("hard")], width=30).pack(pady=20)
+    tk.Label(difficulty_frame, 
+             text="SELECT DIFFICULTY", 
+             font=("Courier", 24, "bold"), bg="#F5DEB3").pack(pady=50)
+    tk.Button(difficulty_frame, 
+              text="EASY (5 life)", 
+              font=("Arial", 18),
+              command=lambda: [difficulty_frame.destroy(), difficulty_selected("easy")], width=30).pack(pady=20)
+    tk.Button(difficulty_frame, 
+              text="MEDIUM (3 life)", 
+              font=("Arial", 18),
+              command=lambda: [difficulty_frame.destroy(), difficulty_selected("medium")], width=30).pack(pady=20)
+    tk.Button(difficulty_frame,
+               text="HARD (1 life)",
+                 font=("Arial", 18), 
+                 command=lambda: [difficulty_frame.destroy(), difficulty_selected("hard")], width=30).pack(pady=20)
 
-
-    
-def start_game(level):
-    global score, speed_multiplier, running, items, canvas, score_display, lives_display, lives
-    
+def difficulty_selected(lvl):
+    global level, lives
+    level = lvl
     if level == "easy":
         lives = 5
     elif level == "medium":
         lives = 3
     elif level == "hard":
         lives = 1
+    start_game()
+
+
+    
+def start_game():
+    global score, speed_multiplier, running, items, canvas, score_display, lives_display, lives, level
     menu_frame.place_forget()
     
     score = 0
@@ -78,7 +93,7 @@ def spawn_loop():
     root.after(interval, spawn_loop)
 
 def process_click(item_id, is_good):
-    global score, speed_multiplier, items
+    global score, speed_multiplier, items, lives
     if not running: return
     
     if is_good:
@@ -94,8 +109,8 @@ def process_click(item_id, is_good):
             canvas.itemconfig(lives_display, text=f"Lives: {lives}")
             canvas.delete(item_id)
             items = [i for i in items if i["id"] != item_id]   
-            if lives == 0:
-                end_game()
+        if lives == 0:
+            end_game()
 
 def game_loop():
     global score, items
