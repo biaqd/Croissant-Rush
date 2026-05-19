@@ -144,6 +144,7 @@ def end_game():
     tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
+    tk.Label(end_gameframe, text="Thank you for playing!", font=("Arial", 16), bg="#F5DEB3").pack(pady=40)
     canvas.destroy()
 
 
