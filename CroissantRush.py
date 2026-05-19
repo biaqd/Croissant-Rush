@@ -81,7 +81,7 @@ def spawn_loop():
     if not running: return
     
     x = random.randint(50, 450)
-    is_good = random.random() > 0.70
+    is_good = random.random() > 0.30
     img = good_img if is_good else bad_img
     
     item_id = canvas.create_image(x, -50, image=img, anchor="center")
@@ -116,7 +116,7 @@ def game_loop():
     global score, items
     if not running : return
     
-    current_speed = 10 * speed_multiplier
+    current_speed = 6 * speed_multiplier
     
     for item_data in items[:]:
         item = item_data["id"]
@@ -132,7 +132,7 @@ def game_loop():
             if item_data in items:
                 items.remove(item_data)
 
-    root.after(30, game_loop)
+    root.after(10, game_loop)
 
 def end_game():
     global running
