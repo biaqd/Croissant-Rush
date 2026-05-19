@@ -14,7 +14,7 @@ def show_menu():
     menu_frame = tk.Frame(root, bg="#F5DEB3")
     menu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(menu_frame, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
-    tk.Button(menu_frame, text="PLAY", font=("Arial", 18), command=start_game, width=30).pack(pady=20)
+    tk.Button(menu_frame, text="PLAY", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
     tk.Button(menu_frame, text="CREDITS", font=("Arial", 18), command=credits, width=30).pack(pady=20)
     tk.Button(menu_frame, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
 
