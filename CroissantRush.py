@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import messagebox
 import random
 from PIL import Image, ImageTk
 
@@ -140,11 +139,10 @@ def end_game():
     end_gameframe = tk.Frame(root, bg="#F5DEB3")
     end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
-    tk.Label(end_gameframe, text=f"GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
+    tk.Label(end_gameframe, text=f" Thank you for playing! \n GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
     tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
-    tk.Label(end_gameframe, text="Thank you for playing!", font=("Arial", 16), bg="#F5DEB3").pack(pady=40)
     canvas.destroy()
 
 
