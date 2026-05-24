@@ -1,6 +1,18 @@
 {
   "scores": [
     {
+      "score": 607,
+      "date": "2026-05-24T11:24:49.121974"
+    },
+    {
+      "score": 238,
+      "date": "2026-05-24T11:18:20.278576"
+    },
+    {
+      "score": 171,
+      "date": "2026-05-24T11:20:48.027881"
+    },
+    {
       "score": 80,
       "date": "2026-05-24T10:31:19.773883"
     },
@@ -13,17 +25,32 @@
       "date": "2026-05-24T07:02:53.392183"
     },
     {
+      "score": 15,
+      "date": "2026-05-24T11:18:59.292043"
+    },
+    {
       "score": 10,
       "date": "2026-05-24T10:30:13.729270"
     },
     {
       "score": 0,
       "date": "2026-05-24T10:39:54.841295"
+    },
+    {
+      "score": 0,
+      "date": "2026-05-24T11:19:26.902884"
     }
   ],
   "unlocked_backgrounds": [
     "default",
-    "sunrise"
+    "evening",
+    "kitchen",
+    "bluebakery",
+    "japanese",
+    "moai",
+    "digitaltropical",
+    "void",
+    "mystery500"
   ],
-  "selected_background": "default"
+  "selected_background": "moai"
 }

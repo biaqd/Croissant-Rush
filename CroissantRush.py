@@ -14,16 +14,16 @@ items = []
 current_background_key = "default"
 
 BACKGROUNDS = [
-    {"id": "default", "name": "Classic", "unlock": 0, "start": "#CEA261", "end": "#8F7033"},
-    {"id": "sunrise", "name": "Sunrise", "unlock": 60, "start": "#FFD580", "end": "#FF8E72"},
-    {"id": "ocean", "name": "Ocean", "unlock": 100, "start": "#70C4FF", "end": "#205B9F"},
-    {"id": "lavender", "name": "Lavender", "unlock": 140, "start": "#DCC6FF", "end": "#7A63FF"},
-    {"id": "mint", "name": "Mint", "unlock": 200, "start": "#C6FFE3", "end": "#4EB48D"},
-    {"id": "twilight", "name": "Twilight", "unlock": 260, "start": "#FFA8D8", "end": "#452A7A"},
-    {"id": "coral", "name": "Coral", "unlock": 320, "start": "#FFB1A4", "end": "#FF5A3C"},
-    {"id": "forest", "name": "Forest", "unlock": 400, "start": "#95D8A9", "end": "#1F5C36"},
-    {"id": "night", "name": "Night", "unlock": 500, "start": "#171B3C", "end": "#5B218F"},
-    {"id": "galaxy", "name": "Galaxy", "unlock": 1000, "start": "#2D2D72", "end": "#1B1B40"},
+    {"id": "default", "name": "Classic Bakery", "unlock": 0, "file": "pixelcafe.png", "start": "#CEA261", "end": "#8F7033"},
+    {"id": "evening", "name": "Evening Bakery", "unlock": 60, "file": "brownbakery.png", "start": "#8B5A2B", "end": "#3E220F"},
+    {"id": "kitchen", "name": "Kitchen", "unlock": 100, "file": "kitchen.png", "start": "#F8E7C4", "end": "#D8B78E"},
+    {"id": "bluebakery", "name": "Blue Bakery", "unlock": 140, "file": "bluebakery.png", "start": "#A1C4FF", "end": "#4A6FB5"},
+    {"id": "japanese", "name": "Japanese Market", "unlock": 200, "file": "japanesestore.png", "start": "#E8D8C4", "end": "#C4723D"},
+    {"id": "moai", "name": "Moai", "unlock": 260, "file": "moai.png", "start": "#C0BFAF", "end": "#6E5B3D"},
+    {"id": "digitaltropical", "name": "Digital Tropical", "unlock": 320, "file": "digitaltropical.png", "start": "#7BE0C0", "end": "#1A5B70"},
+    {"id": "void", "name": "Croissant Void", "unlock": 400, "file": "void.png", "start": "#1F1F28", "end": "#5D2F63"},
+    {"id": "mystery500", "name": "Mystery 500", "unlock": 500, "file": None, "start": "#171B3C", "end": "#5B218F"},
+    {"id": "mystery1000", "name": "Mystery 1000", "unlock": 1000, "file": None, "start": "#2D2D72", "end": "#1B1B40"},
 ]
 
 BACKGROUND_ORDER = [bg["id"] for bg in BACKGROUNDS]
@@ -155,8 +155,7 @@ def game_loop():
         coords = canvas.coords(item)
         if coords and coords[1] > 750: 
             if item_data["is_good"]:
-                score = max(0, score - 10)
-                canvas.itemconfig(score_display, text=f"Score: {score}")
+                    score = max(0, score - 1)
             
             canvas.delete(item)
             if item_data in items:
@@ -384,42 +383,26 @@ def make_gradient_image(start_hex, end_hex):
             raw.putpixel((x, y), (r, g, b))
     return ImageTk.PhotoImage(raw)
 
-bg_images = {"default": bg_img}
+def load_background_image(background):
+    file_name = background.get("file")
+    if file_name:
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+        if os.path.exists(file_path):
+            try:
+                return ImageTk.PhotoImage(Image.open(file_path).resize((500, 700)))
+            except Exception:
+                pass
+    return make_gradient_image(background["start"], background["end"])
+
+bg_images = {}
 for bg in BACKGROUNDS:
-    if bg["id"] == "default":
-        continue
-    bg_images[bg["id"]] = make_gradient_image(bg["start"], bg["end"])
+    bg_images[bg["id"]] = load_background_image(bg)
 
 stored_data = load_data()
 current_background_key = stored_data.get("selected_background", "default")
 
 show_menu()
 root.mainloop()
-
-for y in range(700):
-    blend = y / 700
-    r = int(255 * (1 - blend) + 80 * blend)
-    g = int(176 * (1 - blend) + 160 * blend)
-    b = int(110 * (1 - blend) + 200 * blend)
-    for x in range(500):
-        sunset_raw.putpixel((x, y), (r, g, b))
-sunset_img = ImageTk.PhotoImage(sunset_raw)
-
-ocean_raw = Image.new("RGB", (500, 700), "#3080C0")
-for y in range(700):
-    blend = y / 700
-    r = int(48 * (1 - blend) + 10 * blend)
-    g = int(128 * (1 - blend) + 40 * blend)
-    b = int(192 * (1 - blend) + 100 * blend)
-    for x in range(500):
-        ocean_raw.putpixel((x, y), (r, g, b))
-ocean_img = ImageTk.PhotoImage(ocean_raw)
-
-bg_images = {
-    "default": bg_img,
-    "sunset": sunset_img,
-    "ocean": ocean_img,
-}
 
 stored_data = load_data()
 current_background_key = stored_data.get("selected_background", "default")
