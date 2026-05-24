@@ -13,7 +13,7 @@ running = False
 items = []
 current_background_key = "default"
 
-FORCE_UNLOCK_ALL_BACKGROUNDS = True
+FORCE_UNLOCK_ALL_BACKGROUNDS = False
 
 BACKGROUNDS = [
     {"id": "default", "name": "Classic Bakery", "unlock": 0, "file": "pixelcafe.png", "start": "#CEA261", "end": "#8F7033"},
@@ -129,10 +129,11 @@ def process_click(item_id, is_good):
     if not running: return
     
     if is_good:
-        score += 15
+        score += 5
         canvas.itemconfig(score_display, text=f"Score: {score}")
         if score % 10 == 0:
             speed_multiplier += 0.1
+        maybe_unlock_backgrounds(score)
         canvas.delete(item_id)
         items = [i for i in items if i["id"] != item_id]
     else:
@@ -157,7 +158,8 @@ def game_loop():
         coords = canvas.coords(item)
         if coords and coords[1] > 750: 
             if item_data["is_good"]:
-                    score = max(0, score - 1)
+                score = max(0, score - 2)
+                canvas.itemconfig(score_display, text=f"Score: {score}")
             
             canvas.delete(item)
             if item_data in items:
@@ -225,6 +227,17 @@ def unlock_backgrounds(score, data):
     return data, newly_unlocked
 
 
+def maybe_unlock_backgrounds(current_score):
+    try:
+        data = load_data()
+        data, unlocked = unlock_backgrounds(current_score, data)
+        save_data(data)
+        return unlocked
+    except Exception as e:
+        print("Failed to unlock backgrounds:", e)
+        return []
+
+
 def save_score(value):
     try:
         data = load_data()
@@ -247,13 +260,19 @@ def select_background(key):
         save_data(data)
 
 
+def get_unlocked_backgrounds_by_score(score_value):
+    return {bg["id"] for bg in BACKGROUNDS if score_value >= bg["unlock"]}
+
+
 def show_background_panel():
     board_frame = tk.Frame(root, bg="#F5DEB3")
     board_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Button(board_frame, text="BACK", font=("Arial", 12), command=lambda: [board_frame.destroy(), show_menu()]).pack(anchor="nw", padx=10, pady=10)
     tk.Label(board_frame, text="BACKGROUND UNLOCKS", font=("Courier", 24, "bold"), bg="#F5DEB3").pack(pady=20)
     data = load_data()
-    unlocked = set(data.get("unlocked_backgrounds", BACKGROUND_ORDER if FORCE_UNLOCK_ALL_BACKGROUNDS else ["default"]))
+    saved_unlocked = set(data.get("unlocked_backgrounds", ["default"]))
+    current_session_unlocked = get_unlocked_backgrounds_by_score(score) if running else set()
+    unlocked = saved_unlocked.union(current_session_unlocked)
     best_score = max([entry.get("score", 0) for entry in data.get("scores", [])], default=0)
     tk.Label(board_frame, text=f"Best score: {best_score}", font=("Arial", 16), bg="#F5DEB3").pack(pady=10)
 
