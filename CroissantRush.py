@@ -207,11 +207,13 @@ def load_scores():
 
 def unlock_backgrounds(score, data):
     unlocked = set(data.get("unlocked_backgrounds", ["default"]))
+    previous = set(unlocked)
     for bg in BACKGROUNDS:
         if score >= bg["unlock"]:
             unlocked.add(bg["id"])
     data["unlocked_backgrounds"] = [key for key in BACKGROUND_ORDER if key in unlocked]
-    return data
+    newly_unlocked = [bg["name"] for bg in BACKGROUNDS if bg["id"] in unlocked and bg["id"] not in previous]
+    return data, newly_unlocked
 
 
 def save_score(value):
@@ -219,10 +221,12 @@ def save_score(value):
         data = load_data()
         data["scores"].append({"score": int(value), "date": datetime.utcnow().isoformat()})
         data["scores"] = sorted(data["scores"], key=lambda x: x.get("score", 0), reverse=True)[:10]
-        data = unlock_backgrounds(value, data)
+        data, newly_unlocked = unlock_backgrounds(value, data)
         save_data(data)
+        return newly_unlocked
     except Exception as e:
         print("Failed to save score:", e)
+        return []
 
 
 def select_background(key):
@@ -262,6 +266,22 @@ def show_background_panel():
             tk.Button(frame, text="LOCKED", font=("Arial", 12), state="disabled").pack(side="right")
     tk.Button(board_frame, text="BACK TO MENU", font=("Arial", 18), command=lambda: [board_frame.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Label(board_frame, text="Unlock new backgrounds by reaching high scores.", font=("Arial", 14), bg="#F5DEB3").pack(pady=10)
+
+
+def show_scoreboard():
+    board_frame = tk.Frame(root, bg="#F5DEB3")
+    board_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+    tk.Button(board_frame, text="BACK", font=("Arial", 12), command=lambda: [board_frame.destroy(), show_menu()]).pack(anchor="nw", padx=10, pady=10)
+    tk.Label(board_frame, text="HIGH SCORES", font=("Courier", 24, "bold"), bg="#F5DEB3").pack(pady=20)
+    data = load_data()
+    scores = data.get("scores", [])
+    if not scores:
+        tk.Label(board_frame, text="No high scores yet.", font=("Arial", 16), bg="#F5DEB3").pack(pady=20)
+    else:
+        for i, entry in enumerate(scores, start=1):
+            score_text = f"{i}. {entry.get('score', 0)} - {entry.get('date','')[:10]}"
+            tk.Label(board_frame, text=score_text, font=("Arial", 16), bg="#F5DEB3").pack(pady=2)
+    tk.Button(board_frame, text="BACK TO MENU", font=("Arial", 18), command=lambda: [board_frame.destroy(), show_menu()], width=30).pack(pady=30)
 
 
 def pause_game():
@@ -315,8 +335,9 @@ def quit_to_menu_from_pause():
 def end_game():
     global running
     running = False
+    unlocked = []
     try:
-        save_score(score)
+        unlocked = save_score(score)
     except Exception:
         pass
     try:
@@ -331,6 +352,8 @@ def end_game():
     end_gameframe.place(relx=0, rely=0, relwidth=1, relheight=1)
     tk.Label(end_gameframe, text="CROISSANT RUSH", font=("Courier", 30, "bold"), bg="#F5DEB3").pack(pady=50)
     tk.Label(end_gameframe, text=f" Thank you for playing! \n GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
+    if unlocked:
+        tk.Label(end_gameframe, text=f"New unlock: {', '.join(unlocked)}", font=("Arial", 16), bg="#F5DEB3", fg="#2E8B57").pack(pady=10)
     tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)

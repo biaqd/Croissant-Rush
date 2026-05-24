@@ -15,11 +15,15 @@
     {
       "score": 10,
       "date": "2026-05-24T10:30:13.729270"
+    },
+    {
+      "score": 0,
+      "date": "2026-05-24T10:39:54.841295"
     }
   ],
   "unlocked_backgrounds": [
     "default",
     "sunrise"
   ],
-  "selected_background": "sunrise"
+  "selected_background": "default"
 }
