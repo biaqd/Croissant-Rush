@@ -13,6 +13,8 @@ running = False
 items = []
 current_background_key = "default"
 
+FORCE_UNLOCK_ALL_BACKGROUNDS = True
+
 BACKGROUNDS = [
     {"id": "default", "name": "Classic Bakery", "unlock": 0, "file": "pixelcafe.png", "start": "#CEA261", "end": "#8F7033"},
     {"id": "evening", "name": "Evening Bakery", "unlock": 60, "file": "brownbakery.png", "start": "#8B5A2B", "end": "#3E220F"},
@@ -22,8 +24,8 @@ BACKGROUNDS = [
     {"id": "moai", "name": "Moai", "unlock": 260, "file": "moai.png", "start": "#C0BFAF", "end": "#6E5B3D"},
     {"id": "digitaltropical", "name": "Digital Tropical", "unlock": 320, "file": "digitaltropical.png", "start": "#7BE0C0", "end": "#1A5B70"},
     {"id": "void", "name": "Croissant Void", "unlock": 400, "file": "void.png", "start": "#1F1F28", "end": "#5D2F63"},
-    {"id": "mystery500", "name": "Mystery 500", "unlock": 500, "file": None, "start": "#171B3C", "end": "#5B218F"},
-    {"id": "mystery1000", "name": "Mystery 1000", "unlock": 1000, "file": None, "start": "#2D2D72", "end": "#1B1B40"},
+    {"id": "citypop", "name": "City Pop", "unlock": 500, "file": "citypop.png", "start": "#FF9CD4", "end": "#7C2D8E"},
+    {"id": "mystery", "name": "Mystery", "unlock": 1000, "file": "mystery.png", "start": "#2D2D72", "end": "#1B1B40"},
 ]
 
 BACKGROUND_ORDER = [bg["id"] for bg in BACKGROUNDS]
@@ -175,18 +177,23 @@ def get_scores_file():
 def load_data():
     path = get_scores_file()
     if not os.path.exists(path):
-        return {"scores": [], "unlocked_backgrounds": ["default"], "selected_background": "default"}
+        return {"scores": [], "unlocked_backgrounds": BACKGROUND_ORDER if FORCE_UNLOCK_ALL_BACKGROUNDS else ["default"], "selected_background": "default"}
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
             if isinstance(data, list):
-                return {"scores": data, "unlocked_backgrounds": ["default"], "selected_background": "default"}
-            if isinstance(data, dict):
-                return {
+                loaded = {"scores": data, "unlocked_backgrounds": ["default"], "selected_background": "default"}
+            elif isinstance(data, dict):
+                loaded = {
                     "scores": data.get("scores", []),
                     "unlocked_backgrounds": data.get("unlocked_backgrounds", ["default"]),
                     "selected_background": data.get("selected_background", "default"),
                 }
+            else:
+                loaded = {"scores": [], "unlocked_backgrounds": ["default"], "selected_background": "default"}
+            if FORCE_UNLOCK_ALL_BACKGROUNDS:
+                loaded["unlocked_backgrounds"] = BACKGROUND_ORDER[:]
+            return loaded
     except Exception:
         pass
     return {"scores": [], "unlocked_backgrounds": ["default"], "selected_background": "default"}
@@ -205,6 +212,9 @@ def load_scores():
 
 
 def unlock_backgrounds(score, data):
+    if FORCE_UNLOCK_ALL_BACKGROUNDS:
+        data["unlocked_backgrounds"] = BACKGROUND_ORDER[:]
+        return data, []
     unlocked = set(data.get("unlocked_backgrounds", ["default"]))
     previous = set(unlocked)
     for bg in BACKGROUNDS:
@@ -243,7 +253,7 @@ def show_background_panel():
     tk.Button(board_frame, text="BACK", font=("Arial", 12), command=lambda: [board_frame.destroy(), show_menu()]).pack(anchor="nw", padx=10, pady=10)
     tk.Label(board_frame, text="BACKGROUND UNLOCKS", font=("Courier", 24, "bold"), bg="#F5DEB3").pack(pady=20)
     data = load_data()
-    unlocked = set(data.get("unlocked_backgrounds", ["default"]))
+    unlocked = set(data.get("unlocked_backgrounds", BACKGROUND_ORDER if FORCE_UNLOCK_ALL_BACKGROUNDS else ["default"]))
     best_score = max([entry.get("score", 0) for entry in data.get("scores", [])], default=0)
     tk.Label(board_frame, text=f"Best score: {best_score}", font=("Arial", 16), bg="#F5DEB3").pack(pady=10)
 
