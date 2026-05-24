@@ -1,1 +1,25 @@
-{"top": 40}
+{
+  "scores": [
+    {
+      "score": 80,
+      "date": "2026-05-24T10:31:19.773883"
+    },
+    {
+      "score": 25,
+      "date": "2026-05-24T07:04:17.182499"
+    },
+    {
+      "score": 20,
+      "date": "2026-05-24T07:02:53.392183"
+    },
+    {
+      "score": 10,
+      "date": "2026-05-24T10:30:13.729270"
+    }
+  ],
+  "unlocked_backgrounds": [
+    "default",
+    "sunrise"
+  ],
+  "selected_background": "sunrise"
+}
