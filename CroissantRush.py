@@ -382,7 +382,7 @@ def end_game():
     tk.Label(end_gameframe, text=f" Thank you for playing! \n GAME OVER\nYour Score: {score}", font=("Arial", 18), bg="#F5DEB3").pack(pady=20)
     if unlocked:
         tk.Label(end_gameframe, text=f"New unlock: {', '.join(unlocked)}", font=("Arial", 16), bg="#F5DEB3", fg="#2E8B57").pack(pady=10)
-    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=difficulty_selection, width=30).pack(pady=20)
+    tk.Button(end_gameframe, text="PLAY AGAIN", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), difficulty_selection()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="BACK TO MENU", font=("Arial", 18), command=lambda: [end_gameframe.destroy(), show_menu()], width=30).pack(pady=20)
     tk.Button(end_gameframe, text="QUIT", font=("Arial", 18), command=root.quit, width=30).pack(pady=20)
     canvas.destroy()
@@ -426,12 +426,6 @@ def load_background_image(background):
 bg_images = {}
 for bg in BACKGROUNDS:
     bg_images[bg["id"]] = load_background_image(bg)
-
-stored_data = load_data()
-current_background_key = stored_data.get("selected_background", "default")
-
-show_menu()
-root.mainloop()
 
 stored_data = load_data()
 current_background_key = stored_data.get("selected_background", "default")
