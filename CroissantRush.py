@@ -5,7 +5,6 @@ import json
 import os
 from datetime import datetime
 
-# Variables globales
 score = 0
 lives = 0
 speed_multiplier = 1.0
@@ -97,11 +96,10 @@ def start_game():
     bg_image = bg_images.get(current_background_key, bg_images["default"])
     canvas.create_image(0, 0, image=bg_image, anchor="nw")
     score_display = canvas.create_text(80, 30, text=f"Score: {score}", font=("Arial", 16, "bold"), fill="white")
-    # move lives below score to avoid overlap with pause button
     lives_display = canvas.create_text(80, 60, text=f"Lives: {lives}", font=("Arial", 14, "bold"), fill="white")
     spawn_loop()
     game_loop()
-    # create a pause button on the canvas
+    # pause button
     global pause_button, pause_button_window
     pause_button = tk.Button(root, text="PAUSE", font=("Arial", 12), command=pause_game)
     try:
@@ -388,12 +386,10 @@ def end_game():
     canvas.destroy()
 
 
-# Initialisation de la fenêtre principale
 root = tk.Tk()
 root.title("Croissant Rush")
 root.geometry("500x700")
 
-# Chargement et redimensionnement des ressources
 bg_img = ImageTk.PhotoImage(Image.open("pixelcafe.png").resize((500, 700)))
 good_img = ImageTk.PhotoImage(Image.open("croissant.png").resize((60, 60)))
 bad_img = ImageTk.PhotoImage(Image.open("pizzacroissant.png").resize((60, 60)))
